@@ -135,10 +135,10 @@ function Counter() {
 
     const counterStyle ={
         display: 'flex',
-        justifyContent: 'space-between',
+        justifyContent: 'start',
         alignItems: 'center',
         flexFlow: 'row nowrap',
-        gap: '30px'
+        gap: '200px'
     };
 
     const addStyle = {
