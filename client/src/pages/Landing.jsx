@@ -8,6 +8,7 @@ function Landing() {
            <NavBar />
            <Banner />
            <LandingBody />
+           <Counter />
         </div>
     );
 }
@@ -131,9 +132,46 @@ function LandingBody() {
 }
 
 function Counter() {
+
+    const counterStyle ={
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexFlow: 'row nowrap',
+        gap: '30px'
+    };
+
+    const addStyle = {
+        width: '500px',
+        height: '200px'
+    };
+
     return(
         <div className="counter-main" style={counterStyle}>
-            <div className="counter-contents" style={counterContentsStyle}></div>
+            <CounterContent number={"100+"} text={"Happy Customers"} addStyle={{...addStyle, marginLeft: '70px'}}/>
+            <CounterContent number={"50+"} text={"Vendors Partnered"} addStyle={addStyle} />
+            <CounterContent number={"1000+"} text={"Trending Products"} addStyle={addStyle}/>
+            <CounterContent number={"10+"} text={"Years of Service"} addStyle={{...addStyle, marginRight: '70px'}} />
+        </div>
+    );
+}
+
+function CounterContent({number, text, addStyle}) {
+    
+    const counterContentsStyle ={
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexFlow: 'column nowrap',
+        gap: '10px',
+        color: '#E2C08A',
+        textShadow: '0 0 10px rgba(226, 192, 138, 0.7), 0 0 20px rgba(226, 192, 138, 0.5), 0 0 40px rgba(226, 192, 138, 0.3)'
+    };
+
+    return(
+        <div className="counter-contents" style={{...counterContentsStyle, ...addStyle}}>
+            <span style={{fontSize: '74px'}}>{number}</span>
+            <span style={{fontSize: '28px', color:'#F4F4F2', textShadow: '0 0 10px rgba(226, 192, 138, 0.7), 0 0 20px rgba(226, 192, 138, 0.5), 0 0 40px rgba(226, 192, 138, 0.3)',}}>{text}</span>
         </div>
     );
 }
