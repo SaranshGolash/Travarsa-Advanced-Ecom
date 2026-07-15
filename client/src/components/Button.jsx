@@ -1,6 +1,6 @@
-function Button({textBtn, btnStyle, onMouseEnter, onMouseLeave, handleClick}) {
+function Button({textBtn, style, onMouseEnter, onMouseLeave, handleClick}) {
     return(
-        <button style={btnStyle} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={handleClick}>{textBtn}</button>
+        <button style={style} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} onClick={handleClick}>{textBtn}</button>
     );
 }
 
