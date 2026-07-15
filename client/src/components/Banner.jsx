@@ -5,7 +5,7 @@ function Banner() {
     const imageStyle = {
         height: '500px',
         width: '100%',
-        objectFit: 'cover'
+        objectFit: 'auto'
     };
 
     return(
