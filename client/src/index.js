@@ -5,6 +5,7 @@ import './App.css';
 import App from './App';
 import '@fontsource/kurale';
 import '@fontsource/league-spartan';
+import '@fontsource/raleway';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

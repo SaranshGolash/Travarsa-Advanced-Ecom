@@ -1,3 +1,4 @@
+import React, { useRef, useEffect, useState } from 'react';
 import NavBar from "../components/NavBar";
 import Banner from "../components/Banner";
 import Button from "../components/Button";
@@ -9,6 +10,7 @@ function Landing() {
            <Banner />
            <LandingBody />
            <Counter />
+           <ProductsSlideshow />
         </div>
     );
 }
@@ -93,7 +95,7 @@ function LandingBody() {
         <div className="landingBody-main" style={landingBodyMain}>
             <div className="landingBody-content" style={landingBodyContent}>
                 <span style={textStyle}>STYVORA</span>
-                <span style={{...textStyle, color:'#FFFFFF', fontSize:'78px', marginLeft:'0px', marginTop:'-55px',}}>Apparels</span>
+                <span style={{...textStyle, color:'#FFFFFF', fontSize:'78px', marginLeft:'0px', marginTop:'-55px', fontFamily: 'kurale', letterSpacing: '5px'}}>Apparels</span>
                 <div className="btn-block" style={btnBlockStyle}>
                     <Button textBtn={"Men"} style={btnStyle}/>
                     <Button textBtn={"Women"} style={btnStyle}/>
@@ -138,7 +140,8 @@ function Counter() {
         justifyContent: 'start',
         alignItems: 'center',
         flexFlow: 'row nowrap',
-        gap: '200px'
+        gap: '200px',
+        marginLeft: '10px'
     };
 
     const addStyle = {
@@ -170,8 +173,103 @@ function CounterContent({number, text, addStyle}) {
 
     return(
         <div className="counter-contents" style={{...counterContentsStyle, ...addStyle}}>
-            <span style={{fontSize: '74px'}}>{number}</span>
-            <span style={{fontSize: '28px', color:'#F4F4F2', textShadow: '0 0 10px rgba(226, 192, 138, 0.7), 0 0 20px rgba(226, 192, 138, 0.5), 0 0 40px rgba(226, 192, 138, 0.3)',}}>{text}</span>
+            <span style={{fontSize: '74px', fontFamily: `'Raleway', sans-serif`}}>{number}</span>
+            <span style={{fontSize: '28px', color:'#F4F4F2', textShadow: '0 0 10px rgba(226, 192, 138, 0.7), 0 0 20px rgba(226, 192, 138, 0.5), 0 0 40px rgba(226, 192, 138, 0.3)', fontFamily: `'kurale', sans-serif`}}>{text}</span>
+        </div>
+    );
+}
+
+function ProductsSlideshow() {
+    const scrollRef = useRef(null);
+    const [isHovered, setIsHovered] = useState(false);
+
+    useEffect(() => {
+        const slider = scrollRef.current;
+        if (!slider) return;
+
+        let animationFrameId;
+
+        const scroll = () => {
+            if (!isHovered) {
+                slider.scrollLeft += 1;
+            }
+            
+            if (slider.scrollLeft <= 0) {
+                slider.scrollLeft = slider.scrollWidth / 2 - 1;
+            } else if (slider.scrollLeft >= slider.scrollWidth / 2) {
+                slider.scrollLeft = 1;
+            }
+
+            animationFrameId = requestAnimationFrame(scroll);
+        };
+
+        animationFrameId = requestAnimationFrame(scroll);
+
+        return () => cancelAnimationFrame(animationFrameId);
+    }, [isHovered]);
+
+    const containerStyle = {
+        overflowX: 'auto',
+        overflowY: 'hidden',
+        marginTop: '40px',
+        marginLeft: '120px',
+        marginRight: '120px',
+        whiteSpace: 'nowrap',
+        WebkitOverflowScrolling: 'touch'
+    };
+
+    const trackStyle = {
+        display: 'flex',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        flexFlow: 'row nowrap',
+        gap: '50px',
+        width: 'max-content'
+    };
+
+    const productImageStyle = {
+        width: '200px',
+        height: '200px',
+        flexShrink: 0
+    };
+
+    const images = [
+        {src: "/images/highlanderMenShirt.jpg", alt: "Highlander Men Shirt"},
+        {src: "/images/BearHouseMenTShirt.jpg", alt: "Bear House Men T-Shirt"},
+        {src: "/images/LevisMensPrintedLooseFitTShirt.jpg", alt: "Levi's Men's Printed Loose Fit T-Shirt"},
+        {src: "/images/BenMartinMenJeans.jpg", alt: "Ben Martin Men Jeans"},
+        {src: "/images/MensCottonBaggyTrackpants.jpg", alt: "Men's Cotton Baggy Trackpants"},
+        {src: "/images/GentlemanMensSleevelessTankTop.jpg", alt: "Gentleman Men's Sleeveless Tank Top"},
+        {src: "/images/LymioPoloTshirtForMen.jpg", alt: "Lymio Polo T-Shirt For Men"},
+        {src: "/images/NoberoJoggersForMen.jpg", alt: "Nobero Joggers For Men"}
+    ];
+
+    return(
+        <div 
+            className="productsSlideshow-main no-scrollbar" 
+            style={containerStyle}
+            ref={scrollRef}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onTouchStart={() => setIsHovered(true)}
+            onTouchEnd={() => setIsHovered(false)}
+        >
+            <div style={trackStyle}>
+                {images.map((img, index) => (
+                    <ProductImage key={`orig-${index}`} src={img.src} alt={img.alt} productImageStyle={productImageStyle}/>
+                ))}
+                {images.map((img, index) => (
+                    <ProductImage key={`dup-${index}`} src={img.src} alt={img.alt} productImageStyle={productImageStyle}/>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+function ProductImage({src, alt, productImageStyle}) {
+    return(
+        <div className="productImage-main">
+            <img src={src} alt={alt} style={productImageStyle}/>
         </div>
     );
 }
