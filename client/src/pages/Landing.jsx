@@ -4,13 +4,25 @@ import Banner from "../components/Banner";
 import Button from "../components/Button";
 
 function Landing() {
+
+    const menImages = [
+        {src: "/images/highlanderMenShirt.jpg", alt: "Highlander Men Shirt"},
+        {src: "/images/BearHouseMenTShirt.jpg", alt: "Bear House Men T-Shirt"},
+        {src: "/images/LevisMensPrintedLooseFitTShirt.jpg", alt: "Levi's Men's Printed Loose Fit T-Shirt"},
+        {src: "/images/BenMartinMenJeans.jpg", alt: "Ben Martin Men Jeans"},
+        {src: "/images/MensCottonBaggyTrackpants.jpg", alt: "Men's Cotton Baggy Trackpants"},
+        {src: "/images/GentlemanMensSleevelessTankTop.jpg", alt: "Gentleman Men's Sleeveless Tank Top"},
+        {src: "/images/LymioPoloTshirtForMen.jpg", alt: "Lymio Polo T-Shirt For Men"},
+        {src: "/images/NoberoJoggersForMen.jpg", alt: "Nobero Joggers For Men"}
+    ];
+
     return(
         <div className="landing-main">
            <NavBar />
            <Banner />
            <LandingBody />
            <Counter />
-           <ProductsSlideshow />
+           <ProductsSlideshow sectionHead={"Explore Men's Section →"} images={menImages}/>
         </div>
     );
 }
@@ -179,7 +191,7 @@ function CounterContent({number, text, addStyle}) {
     );
 }
 
-function ProductsSlideshow() {
+function ProductsSlideshow({sectionHead, images}) {
     const scrollRef = useRef(null);
     const [isHovered, setIsHovered] = useState(false);
 
@@ -233,18 +245,23 @@ function ProductsSlideshow() {
         flexShrink: 0
     };
 
-    const images = [
-        {src: "/images/highlanderMenShirt.jpg", alt: "Highlander Men Shirt"},
-        {src: "/images/BearHouseMenTShirt.jpg", alt: "Bear House Men T-Shirt"},
-        {src: "/images/LevisMensPrintedLooseFitTShirt.jpg", alt: "Levi's Men's Printed Loose Fit T-Shirt"},
-        {src: "/images/BenMartinMenJeans.jpg", alt: "Ben Martin Men Jeans"},
-        {src: "/images/MensCottonBaggyTrackpants.jpg", alt: "Men's Cotton Baggy Trackpants"},
-        {src: "/images/GentlemanMensSleevelessTankTop.jpg", alt: "Gentleman Men's Sleeveless Tank Top"},
-        {src: "/images/LymioPoloTshirtForMen.jpg", alt: "Lymio Polo T-Shirt For Men"},
-        {src: "/images/NoberoJoggersForMen.jpg", alt: "Nobero Joggers For Men"}
-    ];
+    const sectionHeadStyle = {
+        display: 'flex',
+        justifyContent:'start',
+        alignItems: 'center',
+        color: '#D4AE73',
+        textShadow: '0 0 10px rgba(226, 192, 138, 0.7), 0 0 20px rgba(226, 192, 138, 0.5), 0 0 40px rgba(226, 192, 138, 0.3)',
+        fontSize: '60px',
+        fontFamily: 'league spartan',
+        marginTop: '40px',
+        marginLeft: '120px',
+    };
 
     return(
+        <>
+        <div className='sectionHead' style={sectionHeadStyle}>
+            <span>{sectionHead}</span>
+        </div>
         <div 
             className="productsSlideshow-main no-scrollbar" 
             style={containerStyle}
@@ -263,6 +280,7 @@ function ProductsSlideshow() {
                 ))}
             </div>
         </div>
+        </>
     );
 }
 
