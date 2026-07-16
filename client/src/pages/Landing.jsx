@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import NavBar from "../components/NavBar";
 import Banner from "../components/Banner";
 import Button from "../components/Button";
+import Footer from '../components/Footer';
 
 function Landing() {
 
@@ -23,6 +24,7 @@ function Landing() {
            <LandingBody />
            <Counter />
            <ProductsSlideshow sectionHead={"Explore Men's Section →"} images={menImages}/>
+           <Footer />
         </div>
     );
 }
