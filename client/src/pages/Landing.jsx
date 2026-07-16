@@ -6,7 +6,7 @@ import Footer from '../components/Footer';
 
 function Landing() {
 
-    const menImages = [
+    const menProductsImages = [
         {src: "/images/highlanderMenShirt.jpg", alt: "Highlander Men Shirt"},
         {src: "/images/BearHouseMenTShirt.jpg", alt: "Bear House Men T-Shirt"},
         {src: "/images/LevisMensPrintedLooseFitTShirt.jpg", alt: "Levi's Men's Printed Loose Fit T-Shirt"},
@@ -17,13 +17,15 @@ function Landing() {
         {src: "/images/NoberoJoggersForMen.jpg", alt: "Nobero Joggers For Men"}
     ];
 
+    const womenProductsImages = [];
     return(
         <div className="landing-main">
            <NavBar />
            <Banner />
            <LandingBody />
            <Counter />
-           <ProductsSlideshow sectionHead={"Explore Men's Section →"} images={menImages}/>
+           <ProductsSlideshow sectionHead={"Explore Men's Section →"} images={menProductsImages}/>
+           <Testimonial />
            <Footer />
         </div>
     );
@@ -290,6 +292,59 @@ function ProductImage({src, alt, productImageStyle}) {
     return(
         <div className="productImage-main">
             <img src={src} alt={alt} style={productImageStyle}/>
+        </div>
+    );
+}
+
+function Testimonial() {
+
+    const testimonialStyle = {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexFlow: 'row nowrap',
+        marginTop: '40px',
+        marginLeft: '120px',
+        marginRight: '120px',
+        height: '500px'
+    };
+
+    const testimonials = [
+        {image:"/images/h1.jpg", alt:"Customer1", name:"David Lawson", description:"This is a great website for fashion! Great variety of products.", rating:"5.0 ⭐⭐⭐⭐⭐"},
+        {image:"/images/h2.jpg", alt:"Customer2", name:"Kavita Golash", description:"Amazing, such comfortable footwears they have.", rating:"4.0 ⭐⭐⭐⭐"},
+        {image:"/images/h3.webp", alt:"Customer3", name:"Chris Evans", description:"Loved it! The UI for this website is so user-friendly.", rating:"5.0 ⭐⭐⭐⭐⭐"},
+    ];
+
+    return(
+        <div className='testimonial-main' style={testimonialStyle}>
+            {testimonials.map((testimonial, index) => (
+                <TestimonialContent key={index} {...testimonial} />
+            ))}
+        </div>
+    );
+}
+
+function TestimonialContent({image, alt, name, description, rating}) {
+
+    const testimonialCardStyle = {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexFlow: 'column nowrap',
+        gap: '30px',
+        width: '300px',
+        height: '300px',
+        marginTop: '80px',
+        color: '#F4F4F2',
+        textShadow: '0 0 10px rgba(226, 192, 138, 0.7), 0 0 20px rgba(226, 192, 138, 0.5), 0 0 40px rgba(226, 192, 138, 0.3)'
+    };
+
+    return(
+        <div className='testimonialContent' style={testimonialCardStyle}>
+            <img src={image} alt={alt} style={{width: '300px', height:'200px', border:'1px solid #D4AE73', boxShadow: '0 0 10px rgba(226, 192, 138, 0.7), 0 0 20px rgba(226, 192, 138, 0.5), 0 0 40px rgba(226, 192, 138, 0.3)', borderRadius: '30px'}}/>
+            <span style={{color:'#D4AE73'}}>{name}</span>
+            <span>{description}</span>
+            <span style={{textShadow:'none'}}>{rating}</span>
         </div>
     );
 }
