@@ -129,22 +129,22 @@ function Landing() {
           <img
             src="/images/KidsHoodedSweatshirt.jpg"
             alt=""
-            style={{ width: "250px", height: "200px" }}
+            style={{ width: "250px", height: "200px", borderRadius: "30px" }}
           />
           <img
             src="/images/MenTerminatorRunningShoes.jpg"
             alt=""
-            style={{ width: "250px", height: "200px" }}
+            style={{ width: "250px", height: "200px", borderRadius: "30px" }}
           />
           <img
             src="/images/PumaMensCourtShatterLowSneakers.jpg"
             alt=""
-            style={{ width: "250px", height: "200px" }}
+            style={{ width: "250px", height: "200px", borderRadius: "30px" }}
           />
           <img
             src="/images/FullSleevesBoysHoodies.jpg"
             alt=""
-            style={{ width: "250px", height: "200px" }}
+            style={{ width: "250px", height: "200px", borderRadius: "30px" }}
           />
         </div>
       </div>

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
+    "@fontsource/bebas-neue": "^5.2.7",
     "@fontsource/kurale": "^5.2.9",
     "@fontsource/league-spartan": "^5.2.8",
     "bootstrap": "^5.3.8",
@@ -10,6 +11,7 @@
     "react-bootstrap": "^2.10.10",
     "react-dom": "^18.2.0",
     "react-icons": "^5.7.0",
+    "react-router-dom": "^7.18.1",
     "react-scripts": "5.0.1",
     "web-vitals": "^2.1.4"
   },

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FaSearch, FaRegHeart, FaShoppingCart } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 function LoggedInNavBar() {
   const [showSearch, setShowSearch] = useState(false);
@@ -88,6 +89,7 @@ function LoggedInNavBar() {
 
 function NavBar() {
   const [hoveredIndex, setHoveredIndex] = useState(null);
+  const navigate = useNavigate();
 
   const navbarMain = {
     display: "flex",
@@ -131,6 +133,7 @@ function NavBar() {
       <div
         className="navbar-image"
         style={{ display: "flex", alignItems: "center", cursor: "pointer" }}
+        onClick={() => navigate("/")}
       >
         <img
           src="/images/brand_name.png"
@@ -145,6 +148,10 @@ function NavBar() {
               key={index}
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
+              onClick={() => {
+                if (item === "Home") navigate("/");
+                else if (item === "About") navigate("/about");
+              }}
               style={{
                 color: hoveredIndex === index ? "#D4AE73" : "#FFFFFF",
                 cursor: "pointer",
