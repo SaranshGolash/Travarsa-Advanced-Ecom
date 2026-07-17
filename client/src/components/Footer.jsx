@@ -21,6 +21,15 @@ function Footer() {
         fontFamily: `'kurale', sans-serif`
     }
 
+    const linkStyle = {
+        color: '#F4F4F2',
+        cursor: 'pointer'
+    };
+
+    const textStyle = {
+        color: '#F4F4F2'
+    };
+
     return(
         <>
         <div className="footer-main" style={{...footerStyle, justifyContent: 'space-between'}}>
@@ -28,33 +37,33 @@ function Footer() {
                 <img src="/images/brand_name_footer.png" alt="Styvora" style={{width:'200px', height:'100px'}} />
             </div>
             <div style={columnStyle}>
-                <span style={{color:'#F4F4F2'}}>About Us</span>
-                <span style={{color:'#F4F4F2'}}>Our Products</span>
-                <span style={{color:'#F4F4F2'}}>Contact Us</span>
-                <span style={{color:'#F4F4F2'}}>Login/SignUp</span>
+                <span style={linkStyle}>About Us</span>
+                <span style={linkStyle}>Our Products</span>
+                <span style={linkStyle}>Contact Us</span>
+                <span style={linkStyle}>Login/SignUp</span>
             </div>
             <div style={columnStyle}>
-                <span style={{color:'#F4F4F2'}}>Men</span>
-                <span style={{color:'#F4F4F2'}}>Footwear</span>
-                <span style={{color:'#F4F4F2'}}>Western</span>
-                <span style={{color:'#F4F4F2'}}>Traditional</span>
+                <span style={textStyle}>Men</span>
+                <span style={linkStyle}>Footwear</span>
+                <span style={linkStyle}>Western</span>
+                <span style={linkStyle}>Traditional</span>
             </div>
             <div style={columnStyle}>
-                <span style={{color:'#F4F4F2'}}>Women</span>
-                <span style={{color:'#F4F4F2'}}>Footwear</span>
-                <span style={{color:'#F4F4F2'}}>Western</span>
-                <span style={{color:'#F4F4F2'}}>Traditional</span>
+                <span style={textStyle}>Women</span>
+                <span style={linkStyle}>Footwear</span>
+                <span style={linkStyle}>Western</span>
+                <span style={linkStyle}>Traditional</span>
             </div>
             <div style={columnStyle}>
-                <span style={{color:'#F4F4F2'}}>Privacy Policy</span>
-                <span style={{color:'#F4F4F2'}}>Refund & Return Policy</span>
-                <span style={{color:'#F4F4F2'}}>Terms & Conditions</span>
-                <span style={{color:'#F4F4F2'}}>Subscribe to Our Newsletter</span>
+                <span style={linkStyle}>Privacy Policy</span>
+                <span style={linkStyle}>Refund & Return Policy</span>
+                <span style={linkStyle}>Terms & Conditions</span>
+                <span style={linkStyle}>Subscribe to Our Newsletter</span>
             </div>
             <div style={columnStyle}>
-                <span style={{color:'#F4F4F2'}}>Email : support@styvora.com</span>
-                <span style={{color:'#F4F4F2'}}>Phone : +91 1234567890</span>
-                <span style={{color:'#F4F4F2'}}>Business Hours: Monday - Saturday | 10:00 AM - 7:00 PM</span>
+                <span style={textStyle}>Email : support@styvora.com</span>
+                <span style={textStyle}>Phone : +91 1234567890</span>
+                <span style={textStyle}>Business Hours: Monday - Saturday | 10:00 AM - 7:00 PM</span>
             </div>
         </div>
         <div className="copyright" style={{...footerStyle, justifyContent: 'space-between'}}>
