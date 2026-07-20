@@ -151,6 +151,7 @@ function NavBar() {
               onClick={() => {
                 if (item === "Home") navigate("/");
                 else if (item === "About") navigate("/about");
+                else if (item === "Support") navigate("/support");
               }}
               style={{
                 color: hoveredIndex === index ? "#D4AE73" : "#FFFFFF",

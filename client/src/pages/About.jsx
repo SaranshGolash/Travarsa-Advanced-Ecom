@@ -5,12 +5,12 @@ import { useNavigate } from "react-router-dom";
 
 function About() {
   const aboutMainStyle = {
-    backgroundImage: `url('/images/backgroundAboutUS.png')`,
+    backgroundImage: `url('/images/backgroundAboutUS1.png')`,
     backgroundSize: "cover",
     backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
+    backgroundAttachment: "fixed",
     minHeight: "100vh",
-    width: "100%",
+    maxWidth: "100%",
   };
 
   return (
