@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 function LoggedInNavBar() {
   const [showSearch, setShowSearch] = useState(false);
+  const navigate = useNavigate();
 
   const containerStyle = {
     display: "flex",
@@ -50,6 +51,7 @@ function LoggedInNavBar() {
           }}
           onMouseEnter={(e) => (e.currentTarget.style.color = "#D4AE73")}
           onMouseLeave={(e) => (e.currentTarget.style.color = "#FFFFFF")}
+          onClick={() => navigate("/auth")}
         >
           Login/SignUp
         </button>
@@ -152,6 +154,7 @@ function NavBar() {
                 if (item === "Home") navigate("/");
                 else if (item === "About") navigate("/about");
                 else if (item === "Support") navigate("/support");
+                else if (item === "Login/SignUp") navigate("/auth");
               }}
               style={{
                 color: hoveredIndex === index ? "#D4AE73" : "#FFFFFF",
