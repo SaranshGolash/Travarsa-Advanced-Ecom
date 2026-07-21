@@ -182,6 +182,7 @@ function FilterProducts() {
 
   const heroTextStyle = {
     flex: 1,
+    fontFamily: "raleway",
   };
 
   const heroHeading = {
@@ -214,7 +215,7 @@ function FilterProducts() {
       case "men":
         return {
           title: "Men's Collection",
-          img: "/images/MenTerminatorRunningShoes.jpg",
+          img: "/images/highlanderMenShirt.jpg",
           sub: "Elevate your style with our premium men's footwear and apparel.",
         };
       case "women":
@@ -274,7 +275,7 @@ function FilterProducts() {
     color: "#D4AE73",
     fontSize: "28px",
     marginBottom: "30px",
-    fontFamily: "'League Spartan', sans-serif",
+    fontFamily: "kurale",
     display: "flex",
     alignItems: "center",
     gap: "10px",
@@ -333,7 +334,6 @@ function FilterProducts() {
             style={{
               width: "400px",
               height: "400px",
-              objectFit: "cover",
               borderRadius: "50%",
               boxShadow:
                 "0 0 50px rgba(226, 192, 138, 0.3), inset 0 0 20px rgba(0,0,0,0.5)",
@@ -560,7 +560,7 @@ function FilterProducts() {
                       style={{
                         fontSize: "26px",
                         color: "#D4AE73",
-                        fontFamily: "'League Spartan', sans-serif",
+                        fontFamily: "kurale",
                       }}
                     >
                       {product.price}
@@ -588,7 +588,7 @@ function FilterProducts() {
                     borderRadius: "10px",
                     cursor: "pointer",
                     fontSize: "18px",
-                    fontFamily: "'League Spartan', sans-serif",
+                    fontFamily: "kurale",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
