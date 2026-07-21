@@ -1,12 +1,33 @@
-import React, { useState, useContext } from "react";
-import { FaSearch, FaRegHeart, FaShoppingCart, FaSignOutAlt, FaUserShield, FaStore } from "react-icons/fa";
+import React, { useState, useContext, useEffect, useRef } from "react";
+import {
+  FaSearch,
+  FaRegHeart,
+  FaShoppingCart,
+  FaSignOutAlt,
+  FaUserShield,
+  FaStore,
+  FaUserCircle,
+  FaCaretDown,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 function LoggedInNavBar() {
   const [showSearch, setShowSearch] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const { user, logout } = useContext(AuthContext);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const containerStyle = {
     display: "flex",
@@ -40,18 +61,151 @@ function LoggedInNavBar() {
     padding: 0,
   };
 
+  const dropdownMenuStyle = {
+    position: "absolute",
+    top: "50px",
+    right: "0",
+    background: "rgba(28, 26, 21, 0.95)",
+    backdropFilter: "blur(10px)",
+    border: "1px solid rgba(212, 174, 115, 0.3)",
+    borderRadius: "12px",
+    padding: "10px 0",
+    minWidth: "200px",
+    boxShadow: "0 10px 30px rgba(0, 0, 0, 0.5)",
+    display: showDropdown ? "flex" : "none",
+    flexDirection: "column",
+    zIndex: 1000,
+    overflow: "hidden",
+  };
+
+  const dropdownItemStyle = {
+    padding: "12px 20px",
+    color: "#FFFFFF",
+    textDecoration: "none",
+    fontFamily: "'League Spartan', sans-serif",
+    fontSize: "16px",
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    cursor: "pointer",
+    transition: "background 0.2s, color 0.2s",
+    background: "transparent",
+    border: "none",
+    width: "100%",
+    textAlign: "left",
+  };
+
   return (
     <div className="loggedInNavBar" style={containerStyle}>
       {user ? (
-        <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-          {user.role === 'admin' && (
-             <button style={buttonStyle} onClick={() => navigate('/admin')} title="Admin Dashboard" onMouseEnter={(e) => (e.currentTarget.style.color = "#D4AE73")} onMouseLeave={(e) => (e.currentTarget.style.color = "#FFFFFF")}><FaUserShield /></button>
-          )}
-          {user.role === 'vendor' && (
-             <button style={buttonStyle} onClick={() => navigate('/vendor')} title="Vendor Dashboard" onMouseEnter={(e) => (e.currentTarget.style.color = "#D4AE73")} onMouseLeave={(e) => (e.currentTarget.style.color = "#FFFFFF")}><FaStore /></button>
-          )}
-          <span style={{ color: "#D4AE73", fontFamily: "Kurale", fontSize: "16px" }}>Hi, {user.username}</span>
-          <button style={buttonStyle} onClick={() => { logout(); navigate('/'); }} title="Logout" onMouseEnter={(e) => (e.currentTarget.style.color = "#D4AE73")} onMouseLeave={(e) => (e.currentTarget.style.color = "#FFFFFF")}><FaSignOutAlt /></button>
+        <div style={{ position: "relative" }} ref={dropdownRef}>
+          <button
+            onClick={() => setShowDropdown(!showDropdown)}
+            style={{
+              ...buttonStyle,
+              gap: "8px",
+              padding: "5px 12px",
+              borderRadius: "20px",
+              border: "1px solid rgba(212,174,115,0.3)",
+              background: "rgba(255,255,255,0.05)",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.borderColor = "#D4AE73")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.borderColor = "rgba(212,174,115,0.3)")
+            }
+          >
+            <FaUserCircle size={24} color="#D4AE73" />
+            <span style={{ fontFamily: "Kurale", fontSize: "16px" }}>
+              {user.username}
+            </span>
+            <FaCaretDown size={14} />
+          </button>
+
+          {/* Dropdown Menu */}
+          <div style={dropdownMenuStyle}>
+            <button
+              style={dropdownItemStyle}
+              onClick={() => {
+                setShowDropdown(false);
+                navigate("/profile");
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "rgba(212,174,115,0.2)";
+                e.currentTarget.style.color = "#D4AE73";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.color = "#FFFFFF";
+              }}
+            >
+              <FaUserCircle /> My Profile
+            </button>
+            {user.role === "admin" && (
+              <button
+                style={dropdownItemStyle}
+                onClick={() => {
+                  setShowDropdown(false);
+                  navigate("/admin");
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "rgba(212,174,115,0.2)";
+                  e.currentTarget.style.color = "#D4AE73";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "transparent";
+                  e.currentTarget.style.color = "#FFFFFF";
+                }}
+              >
+                <FaUserShield /> Admin Dashboard
+              </button>
+            )}
+            {user.role === "vendor" && (
+              <button
+                style={dropdownItemStyle}
+                onClick={() => {
+                  setShowDropdown(false);
+                  navigate("/vendor");
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "rgba(212,174,115,0.2)";
+                  e.currentTarget.style.color = "#D4AE73";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "transparent";
+                  e.currentTarget.style.color = "#FFFFFF";
+                }}
+              >
+                <FaStore /> Vendor Dashboard
+              </button>
+            )}
+            <div
+              style={{
+                height: "1px",
+                background: "rgba(212, 174, 115, 0.2)",
+                margin: "5px 0",
+              }}
+            ></div>
+            <button
+              style={dropdownItemStyle}
+              onClick={() => {
+                setShowDropdown(false);
+                logout();
+                navigate("/");
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "rgba(212,174,115,0.2)";
+                e.currentTarget.style.color = "#e74c3c";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.color = "#FFFFFF";
+              }}
+            >
+              <FaSignOutAlt /> Logout
+            </button>
+          </div>
         </div>
       ) : (
         <div className="auth">
@@ -170,7 +324,8 @@ function NavBar() {
                 else if (item === "About") navigate("/about");
                 else if (item === "Support") navigate("/support");
                 else if (item === "Login/SignUp") navigate("/auth");
-                else navigate(`/products/${item.toLowerCase().replace(" ", "-")}`);
+                else
+                  navigate(`/products/${item.toLowerCase().replace(" ", "-")}`);
               }}
               style={{
                 color: hoveredIndex === index ? "#D4AE73" : "#FFFFFF",

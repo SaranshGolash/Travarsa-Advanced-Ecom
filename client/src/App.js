@@ -4,6 +4,7 @@ import Landing from "./pages/Landing";
 import About from "./pages/About";
 import Support from "./pages/Support";
 import Auth from "./pages/Auth";
+import Profile from "./pages/Profile";
 import FilterProducts from "./components/FilterProducts";
 import AdminDashboard from "./pages/AdminDashboard";
 import VendorDashboard from "./pages/VendorDashboard";
@@ -31,6 +32,14 @@ function App() {
               element={
                 <ProtectedRoute allowedRoles={['admin']}>
                   <AdminDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/profile" 
+              element={
+                <ProtectedRoute>
+                  <Profile />
                 </ProtectedRoute>
               } 
             />

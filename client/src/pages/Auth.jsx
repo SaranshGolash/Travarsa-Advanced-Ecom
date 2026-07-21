@@ -15,7 +15,7 @@ function Auth() {
     username: "",
     email: "",
     password: "",
-    role: "customer"
+    role: "customer",
   });
   const [error, setError] = useState("");
 
@@ -25,43 +25,29 @@ function Auth() {
 
   const handleGoogleSuccess = async (tokenResponse) => {
     try {
-      // The frontend uses @react-oauth/google, but we need the ID token. 
-      // useGoogleLogin provides an access token by default. Wait, to get the ID token we should use implicit flow or auth code flow.
-      // Actually, since we need an ID token, we should fetch it, but let's just send the access token to backend and backend can fetch user info, 
-      // OR we just use the access_token. 
-      // Let's modify the backend call to use this tokenResponse.access_token to fetch user info from Google.
-      const userInfo = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-        headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
-      });
+      const userInfo = await fetch(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        {
+          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+        },
+      );
       const profile = await userInfo.json();
 
-      // Now send the profile to our backend to create/login the user
-      // Since we modified backend to expect `credential` (ID token) and use googleClient.verifyIdToken,
-      // it's easier to just pass the profile directly for this simple implementation if we adapt the backend.
-      // But wait! Since I already wrote the backend to use `googleClient.verifyIdToken({ idToken: credential })`, 
-      // I need to use the `credential` response. To get an ID token with @react-oauth/google, we shouldn't use `useGoogleLogin`, 
-      // we should use `<GoogleLogin>` component. But since we have a custom button style, we can use `useGoogleLogin` with `flow: 'auth-code'`?
-      // No, `useGoogleLogin` returns an `access_token` not an `id_token`.
-      // Let's change our backend to just accept `access_token` and use `googleapis` to verify, or we can just send the `email` and `name` from here (less secure but works for this demo).
-      // For maximum security without over-engineering: let's just send the access_token to the backend, and let backend fetch the user profile.
-      // Wait, let's keep it simple: We'll send the access_token, and backend will verify it.
-      // Let's send it to a new route, or just send the profile here.
-      // For now, let's send the access token to our backend as `credential`, and we'll fix the backend to handle it, OR we just let the frontend fetch the profile and send a "login" request.
-      // Actually, since this is a demo, let's fetch profile here and send it to our backend.
-      
       const response = await fetch(`http://localhost:5000/api/auth/google`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // Sending profile directly (Not secure for production, but works since we are missing real keys anyway)
-        body: JSON.stringify({ credential: tokenResponse.access_token, profile })
+        body: JSON.stringify({
+          credential: tokenResponse.access_token,
+          profile,
+        }),
       });
-      
+
       const data = await response.json();
       if (response.ok) {
         login(data.user, data.token);
-        if (data.user.role === 'admin') navigate('/admin');
-        else if (data.user.role === 'vendor') navigate('/vendor');
-        else navigate('/');
+        if (data.user.role === "admin") navigate("/admin");
+        else if (data.user.role === "vendor") navigate("/vendor");
+        else navigate("/");
       } else {
         setError(data.error || "Google login failed");
       }
@@ -73,33 +59,34 @@ function Auth() {
 
   const googleLogin = useGoogleLogin({
     onSuccess: handleGoogleSuccess,
-    onError: () => setError('Google Login Failed')
+    onError: () => setError("Google Login Failed"),
   });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    
+
     // Quick validation
     if (!isLogin && !formData.username) return setError("Username is required");
-    if (!formData.email || !formData.password) return setError("Email and Password are required");
+    if (!formData.email || !formData.password)
+      return setError("Email and Password are required");
 
     const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
-    
+
     try {
       const response = await fetch(`http://localhost:5000${endpoint}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
-      
+
       const data = await response.json();
-      
+
       if (response.ok) {
         login(data.user, data.token);
-        if (data.user.role === 'admin') navigate('/admin');
-        else if (data.user.role === 'vendor') navigate('/vendor');
-        else navigate('/');
+        if (data.user.role === "admin") navigate("/admin");
+        else if (data.user.role === "vendor") navigate("/vendor");
+        else navigate("/");
       } else {
         setError(data.error || "An error occurred");
       }
@@ -121,7 +108,8 @@ function Auth() {
   };
 
   const formContainerStyle = {
-    background: "linear-gradient(135deg, rgba(28, 26, 21, 0.9) 0%, rgba(28, 26, 21, 0.6) 100%)",
+    background:
+      "linear-gradient(135deg, rgba(28, 26, 21, 0.9) 0%, rgba(28, 26, 21, 0.6) 100%)",
     backdropFilter: "blur(20px)",
     border: "1px solid rgba(212, 174, 115, 0.2)",
     borderRadius: "24px",
@@ -139,83 +127,141 @@ function Auth() {
       <NavBar />
       <div style={authPageStyle}>
         <div style={formContainerStyle}>
-          
           {/* Header */}
           <div style={{ textAlign: "center", marginBottom: "5px" }}>
-            <h2 style={{ 
-              color: "#D4AE73", 
-              fontFamily: "League Spartan", 
-              fontSize: "40px", 
-              margin: "0 0 10px 0",
-              fontWeight: 600
-            }}>
+            <h2
+              style={{
+                color: "#D4AE73",
+                fontFamily: "League Spartan",
+                fontSize: "40px",
+                margin: "0 0 10px 0",
+                fontWeight: 600,
+              }}
+            >
               {isLogin ? "Welcome Back" : "Create Account"}
             </h2>
-            <p style={{ 
-              color: "#F4F4F2", 
-              fontFamily: "monserat", 
-              opacity: 0.8, 
-              margin: 0,
-              fontSize: "15px",
-              lineHeight: "1.5"
-            }}>
-              {isLogin 
-                ? "Enter your details to access your premium account." 
+            <p
+              style={{
+                color: "#F4F4F2",
+                fontFamily: "monserat",
+                opacity: 0.8,
+                margin: 0,
+                fontSize: "15px",
+                lineHeight: "1.5",
+              }}
+            >
+              {isLogin
+                ? "Enter your details to access your premium account."
                 : "Join us and discover exclusive collections."}
             </p>
           </div>
 
           {/* Social Logins */}
           <div style={{ display: "flex", gap: "15px" }}>
-            <SocialButton icon={<FaGoogle />} text="Google" onClick={() => googleLogin()} />
+            <SocialButton
+              icon={<FaGoogle />}
+              text="Google"
+              onClick={() => googleLogin()}
+            />
             <SocialButton icon={<FaApple />} text="Apple" onClick={() => {}} />
           </div>
 
           {/* Divider */}
           <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-            <div style={{ flex: 1, height: "1px", background: "rgba(212, 174, 115, 0.2)" }}></div>
-            <span style={{ color: "#F4F4F2", fontFamily: "monserat", fontSize: "13px", opacity: 0.5, textTransform: "uppercase", letterSpacing: "1px" }}>or continue with email</span>
-            <div style={{ flex: 1, height: "1px", background: "rgba(212, 174, 115, 0.2)" }}></div>
+            <div
+              style={{
+                flex: 1,
+                height: "1px",
+                background: "rgba(212, 174, 115, 0.2)",
+              }}
+            ></div>
+            <span
+              style={{
+                color: "#F4F4F2",
+                fontFamily: "monserat",
+                fontSize: "13px",
+                opacity: 0.5,
+                textTransform: "uppercase",
+                letterSpacing: "1px",
+              }}
+            >
+              or continue with email
+            </span>
+            <div
+              style={{
+                flex: 1,
+                height: "1px",
+                background: "rgba(212, 174, 115, 0.2)",
+              }}
+            ></div>
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          <form
+            onSubmit={handleSubmit}
+            style={{ display: "flex", flexDirection: "column", gap: "20px" }}
+          >
             {error && (
-              <div style={{ background: "rgba(231, 76, 60, 0.2)", border: "1px solid #e74c3c", color: "#e74c3c", padding: "10px", borderRadius: "10px", textAlign: "center" }}>
+              <div
+                style={{
+                  background: "rgba(231, 76, 60, 0.2)",
+                  border: "1px solid #e74c3c",
+                  color: "#e74c3c",
+                  padding: "10px",
+                  borderRadius: "10px",
+                  textAlign: "center",
+                }}
+              >
                 {error}
               </div>
             )}
-            
+
             {!isLogin && (
               <>
-                <InputField 
-                  icon={<FaUser />} 
+                <InputField
+                  icon={<FaUser />}
                   name="username"
                   value={formData.username}
                   onChange={handleChange}
-                  type="text" 
-                  placeholder="Full Name" 
+                  type="text"
+                  placeholder="Full Name"
                 />
-                
+
                 <div style={{ display: "flex", gap: "15px", margin: "5px 0" }}>
-                  <label style={{ color: "#F4F4F2", display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
-                    <input 
-                      type="radio" 
-                      name="role" 
-                      value="customer" 
-                      checked={formData.role === "customer"} 
-                      onChange={handleChange} 
+                  <label
+                    style={{
+                      color: "#F4F4F2",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name="role"
+                      value="customer"
+                      checked={formData.role === "customer"}
+                      onChange={handleChange}
                       style={{ accentColor: "#D4AE73" }}
                     />
                     Customer
                   </label>
-                  <label style={{ color: "#F4F4F2", display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
-                    <input 
-                      type="radio" 
-                      name="role" 
-                      value="vendor" 
-                      checked={formData.role === "vendor"} 
-                      onChange={handleChange} 
+                  <label
+                    style={{
+                      color: "#F4F4F2",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name="role"
+                      value="vendor"
+                      checked={formData.role === "vendor"}
+                      onChange={handleChange}
                       style={{ accentColor: "#D4AE73" }}
                     />
                     Vendor
@@ -223,33 +269,66 @@ function Auth() {
                 </div>
               </>
             )}
-            
-            <InputField 
-              icon={<FaEnvelope />} 
+
+            <InputField
+              icon={<FaEnvelope />}
               name="email"
               value={formData.email}
               onChange={handleChange}
-              type="email" 
-              placeholder="Email Address" 
+              type="email"
+              placeholder="Email Address"
             />
-            <InputField 
-              icon={<FaLock />} 
+            <InputField
+              icon={<FaLock />}
               name="password"
               value={formData.password}
               onChange={handleChange}
-              type="password" 
-              placeholder="Password" 
+              type="password"
+              placeholder="Password"
             />
-            
+
             {isLogin && (
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "-5px" }}>
-                <label style={{ display: "flex", alignItems: "center", gap: "8px", color: "#F4F4F2", fontFamily: "monserat", fontSize: "14px", cursor: "pointer" }}>
-                  <input type="checkbox" style={{ accentColor: "#D4AE73", cursor: "pointer", width: "16px", height: "16px" }} />
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginTop: "-5px",
+                }}
+              >
+                <label
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    color: "#F4F4F2",
+                    fontFamily: "monserat",
+                    fontSize: "14px",
+                    cursor: "pointer",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    style={{
+                      accentColor: "#D4AE73",
+                      cursor: "pointer",
+                      width: "16px",
+                      height: "16px",
+                    }}
+                  />
                   <span style={{ opacity: 0.8 }}>Remember me</span>
                 </label>
-                <span style={{ color: "#D4AE73", fontFamily: "monserat", fontSize: "14px", cursor: "pointer", transition: "opacity 0.3s" }} 
-                      onMouseEnter={(e) => e.target.style.opacity = 0.8}
-                      onMouseLeave={(e) => e.target.style.opacity = 1}>
+                <span
+                  style={{
+                    color: "#D4AE73",
+                    fontFamily: "monserat",
+                    fontSize: "14px",
+                    cursor: "pointer",
+                    transition: "opacity 0.3s",
+                  }}
+                  onMouseEnter={(e) => (e.target.style.opacity = 0.8)}
+                  onMouseLeave={(e) => (e.target.style.opacity = 1)}
+                >
                   Forgot Password?
                 </span>
               </div>
@@ -269,15 +348,17 @@ function Auth() {
                 cursor: "pointer",
                 marginTop: "10px",
                 transition: "all 0.3s ease",
-                boxShadow: "0 5px 15px rgba(212, 174, 115, 0.2)"
+                boxShadow: "0 5px 15px rgba(212, 174, 115, 0.2)",
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.transform = "translateY(-3px)";
-                e.currentTarget.style.boxShadow = "0 10px 25px rgba(212, 174, 115, 0.3)";
+                e.currentTarget.style.boxShadow =
+                  "0 10px 25px rgba(212, 174, 115, 0.3)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = "translateY(0)";
-                e.currentTarget.style.boxShadow = "0 5px 15px rgba(212, 174, 115, 0.2)";
+                e.currentTarget.style.boxShadow =
+                  "0 5px 15px rgba(212, 174, 115, 0.2)";
               }}
             >
               {isLogin ? "Sign In" : "Sign Up"}
@@ -286,26 +367,37 @@ function Auth() {
 
           {/* Toggle */}
           <div style={{ textAlign: "center", marginTop: "5px" }}>
-            <span style={{ color: "#F4F4F2", fontFamily: "monserat", fontSize: "15px", opacity: 0.8 }}>
-              {isLogin ? "Don't have an account? " : "Already have an account? "}
+            <span
+              style={{
+                color: "#F4F4F2",
+                fontFamily: "monserat",
+                fontSize: "15px",
+                opacity: 0.8,
+              }}
+            >
+              {isLogin
+                ? "Don't have an account? "
+                : "Already have an account? "}
             </span>
-            <span 
-              onClick={() => { setIsLogin(!isLogin); setError(""); }}
-              style={{ 
-                color: "#D4AE73", 
-                fontFamily: "monserat", 
-                fontSize: "15px", 
+            <span
+              onClick={() => {
+                setIsLogin(!isLogin);
+                setError("");
+              }}
+              style={{
+                color: "#D4AE73",
+                fontFamily: "monserat",
+                fontSize: "15px",
                 fontWeight: "bold",
                 cursor: "pointer",
-                transition: "opacity 0.3s"
+                transition: "opacity 0.3s",
               }}
-              onMouseEnter={(e) => e.target.style.opacity = 0.7}
-              onMouseLeave={(e) => e.target.style.opacity = 1}
+              onMouseEnter={(e) => (e.target.style.opacity = 0.7)}
+              onMouseLeave={(e) => (e.target.style.opacity = 1)}
             >
               {isLogin ? "Sign Up" : "Sign In"}
             </span>
           </div>
-
         </div>
       </div>
       <Footer />
@@ -317,17 +409,26 @@ function InputField({ icon, type, placeholder, name, value, onChange }) {
   const [isFocused, setIsFocused] = useState(false);
 
   return (
-    <div style={{
-      display: "flex",
-      alignItems: "center",
-      background: "rgba(28, 26, 21, 0.6)",
-      border: `1px solid ${isFocused ? "#D4AE73" : "rgba(212, 174, 115, 0.2)"}`,
-      borderRadius: "14px",
-      padding: "0 20px",
-      transition: "all 0.3s ease",
-      boxShadow: isFocused ? "0 0 10px rgba(212, 174, 115, 0.1)" : "none"
-    }}>
-      <div style={{ color: isFocused ? "#D4AE73" : "rgba(244, 244, 242, 0.4)", fontSize: "18px", transition: "color 0.3s ease", marginTop: "4px" }}>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        background: "rgba(28, 26, 21, 0.6)",
+        border: `1px solid ${isFocused ? "#D4AE73" : "rgba(212, 174, 115, 0.2)"}`,
+        borderRadius: "14px",
+        padding: "0 20px",
+        transition: "all 0.3s ease",
+        boxShadow: isFocused ? "0 0 10px rgba(212, 174, 115, 0.1)" : "none",
+      }}
+    >
+      <div
+        style={{
+          color: isFocused ? "#D4AE73" : "rgba(244, 244, 242, 0.4)",
+          fontSize: "18px",
+          transition: "color 0.3s ease",
+          marginTop: "4px",
+        }}
+      >
         {icon}
       </div>
       <input

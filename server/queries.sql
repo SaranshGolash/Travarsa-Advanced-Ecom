@@ -69,9 +69,20 @@ CREATE TABLE cart_items (
 );
 
 -- Create wishlist_items table
-CREATE TABLE wishlist_items (
-    id SERIAL PRIMARY KEY,
-    customer_id INT REFERENCES users(id) ON DELETE CASCADE,
-    product_id INT REFERENCES products(id) ON DELETE CASCADE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE IF NOT EXISTS wishlist_items (
+  id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES users(id) ON DELETE CASCADE,
+  product_id INT REFERENCES products(id) ON DELETE CASCADE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(user_id, product_id)
+);
+
+-- Vendor Applications tracking table
+CREATE TABLE IF NOT EXISTS vendor_applications (
+  id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES users(id) ON DELETE CASCADE,
+  business_name VARCHAR(100) NOT NULL,
+  document_path VARCHAR(255) NOT NULL,
+  status VARCHAR(20) DEFAULT 'pending',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
