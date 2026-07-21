@@ -155,6 +155,7 @@ function NavBar() {
                 else if (item === "About") navigate("/about");
                 else if (item === "Support") navigate("/support");
                 else if (item === "Login/SignUp") navigate("/auth");
+                else navigate(`/products/${item.toLowerCase().replace(" ", "-")}`);
               }}
               style={{
                 color: hoveredIndex === index ? "#D4AE73" : "#FFFFFF",
