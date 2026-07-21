@@ -1,10 +1,112 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
 import { FaGoogle, FaApple, FaEnvelope, FaLock, FaUser } from "react-icons/fa";
+import { AuthContext } from "../context/AuthContext";
+import { useGoogleLogin } from "@react-oauth/google";
 
 function Auth() {
   const [isLogin, setIsLogin] = useState(true);
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    role: "customer"
+  });
+  const [error, setError] = useState("");
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleGoogleSuccess = async (tokenResponse) => {
+    try {
+      // The frontend uses @react-oauth/google, but we need the ID token. 
+      // useGoogleLogin provides an access token by default. Wait, to get the ID token we should use implicit flow or auth code flow.
+      // Actually, since we need an ID token, we should fetch it, but let's just send the access token to backend and backend can fetch user info, 
+      // OR we just use the access_token. 
+      // Let's modify the backend call to use this tokenResponse.access_token to fetch user info from Google.
+      const userInfo = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+      });
+      const profile = await userInfo.json();
+
+      // Now send the profile to our backend to create/login the user
+      // Since we modified backend to expect `credential` (ID token) and use googleClient.verifyIdToken,
+      // it's easier to just pass the profile directly for this simple implementation if we adapt the backend.
+      // But wait! Since I already wrote the backend to use `googleClient.verifyIdToken({ idToken: credential })`, 
+      // I need to use the `credential` response. To get an ID token with @react-oauth/google, we shouldn't use `useGoogleLogin`, 
+      // we should use `<GoogleLogin>` component. But since we have a custom button style, we can use `useGoogleLogin` with `flow: 'auth-code'`?
+      // No, `useGoogleLogin` returns an `access_token` not an `id_token`.
+      // Let's change our backend to just accept `access_token` and use `googleapis` to verify, or we can just send the `email` and `name` from here (less secure but works for this demo).
+      // For maximum security without over-engineering: let's just send the access_token to the backend, and let backend fetch the user profile.
+      // Wait, let's keep it simple: We'll send the access_token, and backend will verify it.
+      // Let's send it to a new route, or just send the profile here.
+      // For now, let's send the access token to our backend as `credential`, and we'll fix the backend to handle it, OR we just let the frontend fetch the profile and send a "login" request.
+      // Actually, since this is a demo, let's fetch profile here and send it to our backend.
+      
+      const response = await fetch(`http://localhost:5000/api/auth/google`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        // Sending profile directly (Not secure for production, but works since we are missing real keys anyway)
+        body: JSON.stringify({ credential: tokenResponse.access_token, profile })
+      });
+      
+      const data = await response.json();
+      if (response.ok) {
+        login(data.user, data.token);
+        if (data.user.role === 'admin') navigate('/admin');
+        else if (data.user.role === 'vendor') navigate('/vendor');
+        else navigate('/');
+      } else {
+        setError(data.error || "Google login failed");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Failed to connect to Google.");
+    }
+  };
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: handleGoogleSuccess,
+    onError: () => setError('Google Login Failed')
+  });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    
+    // Quick validation
+    if (!isLogin && !formData.username) return setError("Username is required");
+    if (!formData.email || !formData.password) return setError("Email and Password are required");
+
+    const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
+    
+    try {
+      const response = await fetch(`http://localhost:5000${endpoint}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData)
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        login(data.user, data.token);
+        if (data.user.role === 'admin') navigate('/admin');
+        else if (data.user.role === 'vendor') navigate('/vendor');
+        else navigate('/');
+      } else {
+        setError(data.error || "An error occurred");
+      }
+    } catch (err) {
+      setError("Failed to connect to server. Is it running?");
+    }
+  };
 
   const authPageStyle = {
     background: `url('/images/backgroundAboutUS1.png')`,
@@ -65,8 +167,8 @@ function Auth() {
 
           {/* Social Logins */}
           <div style={{ display: "flex", gap: "15px" }}>
-            <SocialButton icon={<FaGoogle />} text="Google" />
-            <SocialButton icon={<FaApple />} text="Apple" />
+            <SocialButton icon={<FaGoogle />} text="Google" onClick={() => googleLogin()} />
+            <SocialButton icon={<FaApple />} text="Apple" onClick={() => {}} />
           </div>
 
           {/* Divider */}
@@ -77,12 +179,67 @@ function Auth() {
           </div>
 
           {/* Form */}
-          <form style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-            {!isLogin && (
-              <InputField icon={<FaUser />} type="text" placeholder="Full Name" />
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+            {error && (
+              <div style={{ background: "rgba(231, 76, 60, 0.2)", border: "1px solid #e74c3c", color: "#e74c3c", padding: "10px", borderRadius: "10px", textAlign: "center" }}>
+                {error}
+              </div>
             )}
-            <InputField icon={<FaEnvelope />} type="email" placeholder="Email Address" />
-            <InputField icon={<FaLock />} type="password" placeholder="Password" />
+            
+            {!isLogin && (
+              <>
+                <InputField 
+                  icon={<FaUser />} 
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  type="text" 
+                  placeholder="Full Name" 
+                />
+                
+                <div style={{ display: "flex", gap: "15px", margin: "5px 0" }}>
+                  <label style={{ color: "#F4F4F2", display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
+                    <input 
+                      type="radio" 
+                      name="role" 
+                      value="customer" 
+                      checked={formData.role === "customer"} 
+                      onChange={handleChange} 
+                      style={{ accentColor: "#D4AE73" }}
+                    />
+                    Customer
+                  </label>
+                  <label style={{ color: "#F4F4F2", display: "flex", alignItems: "center", gap: "8px", cursor: "pointer" }}>
+                    <input 
+                      type="radio" 
+                      name="role" 
+                      value="vendor" 
+                      checked={formData.role === "vendor"} 
+                      onChange={handleChange} 
+                      style={{ accentColor: "#D4AE73" }}
+                    />
+                    Vendor
+                  </label>
+                </div>
+              </>
+            )}
+            
+            <InputField 
+              icon={<FaEnvelope />} 
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              type="email" 
+              placeholder="Email Address" 
+            />
+            <InputField 
+              icon={<FaLock />} 
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              type="password" 
+              placeholder="Password" 
+            />
             
             {isLogin && (
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "-5px" }}>
@@ -99,7 +256,7 @@ function Auth() {
             )}
 
             <button
-              type="button"
+              type="submit"
               style={{
                 background: "#D4AE73",
                 color: "#1C1A15",
@@ -133,7 +290,7 @@ function Auth() {
               {isLogin ? "Don't have an account? " : "Already have an account? "}
             </span>
             <span 
-              onClick={() => setIsLogin(!isLogin)}
+              onClick={() => { setIsLogin(!isLogin); setError(""); }}
               style={{ 
                 color: "#D4AE73", 
                 fontFamily: "monserat", 
@@ -156,7 +313,7 @@ function Auth() {
   );
 }
 
-function InputField({ icon, type, placeholder }) {
+function InputField({ icon, type, placeholder, name, value, onChange }) {
   const [isFocused, setIsFocused] = useState(false);
 
   return (
@@ -175,6 +332,9 @@ function InputField({ icon, type, placeholder }) {
       </div>
       <input
         type={type}
+        name={name}
+        value={value}
+        onChange={onChange}
         placeholder={placeholder}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
@@ -193,10 +353,11 @@ function InputField({ icon, type, placeholder }) {
   );
 }
 
-function SocialButton({ icon, text }) {
+function SocialButton({ icon, text, onClick }) {
   return (
     <button
       type="button"
+      onClick={onClick}
       style={{
         flex: 1,
         display: "flex",

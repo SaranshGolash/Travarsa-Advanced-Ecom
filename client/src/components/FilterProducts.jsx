@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 import { FaFilter, FaStar, FaShoppingCart } from "react-icons/fa";
@@ -125,7 +125,6 @@ const allProducts = [
 
 function FilterProducts() {
   const { category } = useParams();
-  const navigate = useNavigate();
 
   const currentCategory = category || "all";
 

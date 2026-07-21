@@ -1,10 +1,12 @@
-import React, { useState } from "react";
-import { FaSearch, FaRegHeart, FaShoppingCart } from "react-icons/fa";
+import React, { useState, useContext } from "react";
+import { FaSearch, FaRegHeart, FaShoppingCart, FaSignOutAlt, FaUserShield, FaStore } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 
 function LoggedInNavBar() {
   const [showSearch, setShowSearch] = useState(false);
   const navigate = useNavigate();
+  const { user, logout } = useContext(AuthContext);
 
   const containerStyle = {
     display: "flex",
@@ -40,22 +42,35 @@ function LoggedInNavBar() {
 
   return (
     <div className="loggedInNavBar" style={containerStyle}>
-      <div className="auth">
-        <button
-          type="button"
-          style={{
-            ...buttonStyle,
-            fontSize: "16px",
-            fontFamily: "Kurale",
-            fontWeight: "500",
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = "#D4AE73")}
-          onMouseLeave={(e) => (e.currentTarget.style.color = "#FFFFFF")}
-          onClick={() => navigate("/auth")}
-        >
-          Login/SignUp
-        </button>
-      </div>
+      {user ? (
+        <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+          {user.role === 'admin' && (
+             <button style={buttonStyle} onClick={() => navigate('/admin')} title="Admin Dashboard" onMouseEnter={(e) => (e.currentTarget.style.color = "#D4AE73")} onMouseLeave={(e) => (e.currentTarget.style.color = "#FFFFFF")}><FaUserShield /></button>
+          )}
+          {user.role === 'vendor' && (
+             <button style={buttonStyle} onClick={() => navigate('/vendor')} title="Vendor Dashboard" onMouseEnter={(e) => (e.currentTarget.style.color = "#D4AE73")} onMouseLeave={(e) => (e.currentTarget.style.color = "#FFFFFF")}><FaStore /></button>
+          )}
+          <span style={{ color: "#D4AE73", fontFamily: "Kurale", fontSize: "16px" }}>Hi, {user.username}</span>
+          <button style={buttonStyle} onClick={() => { logout(); navigate('/'); }} title="Logout" onMouseEnter={(e) => (e.currentTarget.style.color = "#D4AE73")} onMouseLeave={(e) => (e.currentTarget.style.color = "#FFFFFF")}><FaSignOutAlt /></button>
+        </div>
+      ) : (
+        <div className="auth">
+          <button
+            type="button"
+            style={{
+              ...buttonStyle,
+              fontSize: "16px",
+              fontFamily: "Kurale",
+              fontWeight: "500",
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = "#D4AE73")}
+            onMouseLeave={(e) => (e.currentTarget.style.color = "#FFFFFF")}
+            onClick={() => navigate("/auth")}
+          >
+            Login/SignUp
+          </button>
+        </div>
+      )}
       <input type="text" placeholder="Search..." name="q" style={inputStyle} />
       <button
         type="button"

@@ -6,6 +6,7 @@
     "@fontsource/bebas-neue": "^5.2.7",
     "@fontsource/kurale": "^5.2.9",
     "@fontsource/league-spartan": "^5.2.8",
+    "@react-oauth/google": "^0.13.5",
     "bootstrap": "^5.3.8",
     "react": "^18.2.0",
     "react-bootstrap": "^2.10.10",
